@@ -1,0 +1,1241 @@
+@model DMD.UI.ViewModels.PlayViewModel
+
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Play</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/jQueryUI/jquery-ui.min.css" />
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="~/css/playStylesheet/styles.css" />
+    <link rel="stylesheet" href="~/css/charStylesheet/Styles.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script href="~/js/jQueryUI/jquery-ui.min.js"></script>
+    <script href="~/js/jQueryUI/jquery.js"></script>
+    <script href="~/js/diceroll.js"></script>
+
+</head>
+
+<script>
+        //var selectedCharacter = Model.currentUserCharacter;
+
+        var currentZoom = 1.0;
+
+        function zoomOut() {
+            if(currentZoom >= .6){
+                $(".zoomable").animate({ 'zoom': currentZoom -= .1 }, 'fast');
+                if(currentZoom == 1){
+                    $("#zoomLabel").text("")
+                }
+                else{
+                    $("#zoomLabel").text("Zoom:" + Math.round(currentZoom * 100) + "%");
+                }
+            }
+        }
+
+        function zoomIn() {
+            if (currentZoom <= 1.5) {
+                $(".zoomable").animate({ 'zoom': currentZoom += .1 }, 'fast');
+                if (currentZoom == 1) {
+                    $("#zoomLabel").text("")
+                }
+                else {
+                    $("#zoomLabel").text("Zoom:" + Math.round(currentZoom * 100) + "%");
+                }
+            }
+        }
+
+        function closeNav() {
+            $("#navbar").animate({ height: "0px" });
+            $(".navitem").hide("slow");
+        }
+        function openNav() {
+            $("#navbar").animate({ height: "65px" });
+            $(".navitem").show("slow");
+        }
+
+        function openForm() {
+          document.getElementById("chatBox").style.display = "block";
+        }
+
+        function closeForm() {
+          document.getElementById("chatBox").style.display = "none";
+        }
+
+        function toggleCharSheet() {
+            $("#charSheet").toggle();
+        }
+
+        function toggleMapsGallery() {
+            $("#MapsGallery").toggle();
+        }
+
+        function diceRoll() {
+            alert("You clicked a dice");
+        }
+
+        $(function(){
+            $(".draggable-ui").draggable({ scroll: true, scrollSensitivity: 200});
+            
+            $("#toolbar").draggable({ containment: "#toolWindow", snap: "true", snap: "#toolWindow", snapMode: "inner", stack: ".draggable-ui" });
+                        
+            $("#dicetoolbar").draggable({ containment: "#toolWindow", snap: "true", snap: "#toolWindow", snapMode: "inner", stack: ".draggable-ui" });
+
+            $("#chatBox").draggable({ containment: "#toolWindow", snap: "true", snap: "#toolWindow", snapMode: "inner", stack: ".draggable-ui" });
+
+            $("#charSheet").draggable({ containment: "#toolWindow", snap: "true", snap: "#toolWindow", snapMode: "inner", stack: ".draggable-ui" });
+
+
+            $("#grid20").draggable({ grid: [ 20, 20 ] });
+            $("#grid80").draggable({ grid: [ 80, 80 ] });
+            $( ".specialAsset" ).resizable();
+
+            $( "#chatBox" ).resizable({
+              maxHeight: 750,
+              maxWidth: 400,
+              minHeight: 400,
+              minWidth: 200
+            });
+
+            //var charIndex;
+
+            //$( ".characterSelect" ).change(function() {
+                
+            //    alert("Checking for Input, Update the Character Form");
+            //    alert($(".characterSelect")[0].selectedIndex);
+
+            //    charIndex = $(".characterSelect")[0].selectedIndex;
+
+            //    if(charIndex >= 0)
+            //    {
+            //        alert(charArr[charIndex]);
+            //    }
+
+            //});
+        });
+            
+            let x;
+            let y;
+            let z;
+            let i;
+            let j;
+            let k;
+
+            function Roll4() {
+                x = Math.floor(Math.random() * 4) + 1;
+
+                document.getElementById("diceLabel").innerHTML = x;
+            }
+
+            function Roll6() {
+                x = Math.floor(Math.random() * 6) + 1;
+
+                document.getElementById("diceLabel").innerHTML = x;
+            }
+
+            function Roll8() {
+                x = Math.floor(Math.random() * 8) + 1;
+
+                document.getElementById("diceLabel").innerHTML = x;
+            }
+            function Roll10() {
+                x = Math.floor(Math.random() * 10) + 1;
+
+                document.getElementById("diceLabel").innerHTML = x;
+            }
+            function Roll12() {
+                x = Math.floor(Math.random() * 12) + 1;
+
+                document.getElementById("diceLabel").innerHTML = x;
+            }
+            function Roll20() {
+                x = Math.floor(Math.random() * 20) + 1;
+
+                document.getElementById("diceLabel").innerHTML = x;
+            }
+            
+    </script>
+    
+
+    <!----------------------- NAV DIV-------------------------->
+@{
+    var fullname = @HttpContextAccessor.HttpContext.Session.GetString("fullname");
+    if (fullname != null)
+        fullname = fullname.Replace("\"", "");
+}
+
+@{
+    var login = "Login";
+
+    if (fullname != null)
+    {
+        login = "";
+
+        if (fullname == "")
+        {
+            login = "Login";
+        }
+    }
+    else
+    {
+        login = "Login";
+    }
+}
+            <div id="navbar">
+            <a class="navitem" id="homeicon" href="../Home"> <img src="~/img/DMD-Main-Logo.jpg" width="100" height="55"/></a>
+            <div class="row customNavRow justify-content-around">
+            
+                    <div class="col-10 justify-content-start">
+                        <div id="navLinks">
+                                <a class="navitem" href="../Character/Create">Create A Character</a>
+                                <a class="navitem" href="../Play">Play</a>
+                                <a class="navitem" href="../About">About Us</a>
+                        </div>
+                    </div>
+                    <div class="col-2 navContentRight">
+                            <a class="navitem nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @fullname
+                            </a>
+
+                            <a class="navitem top-nav-link custom-nav-links" asp-area="" asp-controller="User" asp-action="Login">@login</a>
+                            <button class="navitem open-button" onclick="closeNav()">
+                                <span class="material-symbols-outlined">
+                                    arrow_drop_up
+                                </span>
+                            </button>
+
+                    </div>
+            </div>
+            </div>
+    <!--------------------------------------------------------->
+
+    <div id="page">
+
+        <div class="controlbtns">
+
+        <!----------------Button that opens the CHAT ------------------------>
+        <button class="open-button" onclick="openForm()">
+            <span class="material-symbols-outlined">
+                chat
+            </span>
+        </button>
+        <!------------------------------------------------------------------->
+
+        <!----------------Button that opens the NAV ------------------------>
+        <button class="open-button" onclick="openNav()">
+            <span class="material-symbols-outlined">
+                arrow_drop_down
+            </span>
+        </button>
+        <!------------------------------------------------------------------->
+        
+        <!----------------Button that opens CHARACTER SHEET ------------------------>
+        <button class="open-button" onclick="toggleCharSheet()">
+            <span class="material-symbols-outlined">
+                contact_page
+            </span>
+        </button>
+        <!------------------------------------------------------------------->
+        </div>
+
+
+        <!--------- DO NOT ADD ANYTHING INSIDE TOOLWINDOW DIV------>
+        <div id="toolWindow"></div>
+        <!--------------------------------------------------------->
+
+
+        <!--------- DIV WITH ZOOM CONTROLS------>
+        <div id="zoomBox" class="row">
+            <div class="col">
+                <!----------------Button that ZOOMS IN ------------------------>
+                <button class="zoomIcon" onclick="zoomIn()">
+                    <span class="zoomIcon material-symbols-outlined">
+                        zoom_in
+                    </span>
+                </button>
+                <!------------------------------------------------------------------->
+                <!----------------Button that ZOOMS OUT ------------------------>
+                <button class="zoomIcon" onclick="zoomOut()">
+                    <span class="zoomIcon material-symbols-outlined">
+                        zoom_out
+                    </span>
+                </button>
+                <!------------------------------------------------------------------->
+            </div>
+            <div class="col">
+                <h5 id="zoomLabel"></h5>
+            </div>
+        </div>
+        <!--------------------------------------------------------->
+
+        <!-----------------------CHARACTER SHEET ------------------------>
+        <div id="charSheet">
+            <button class="btnClose" onclick="toggleCharSheet()">X</button>
+
+            <div class="card m-3">
+                <div class="card-header">
+                    <h2 class="h5 m-2">Select the character you wish to play as. </h2>
+                    <em class="m-2 text-danger">*Note: The page will reload after your selection.</em>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="SelectCharacter">
+                        <div class="row justify-content-center">
+                        <select asp-for="SelectedCharacterId" class="form-select form-control col m-2" asp-items="@(new SelectList(Model.allUserCharacters,"Id","FirstName"))"><option selected disabled hidden>@Model.currentUserCharacter.FirstName</option></select>
+                            <div class="form-group justify-content-center mt-2 col m-2">
+                                <input type="submit" value="Change Character" class="custom-button m-3" />
+                            </div>
+                        </div>
+                    @*
+                    <select class="characterSelect" asp-for="SelectedCharacterId">
+                        @foreach (var item in Model.allUserCharacters)
+                            {
+                                <option hidden selected disabled>@Model.currentUserCharacter.FirstName | @Model.currentUserCharacter.LastName | Level @Model.currentUserCharacter.CharacterLevelId</option>
+                                <option>
+                                @item.FirstName @item.LastName
+                                 | 
+                                Level @item.CharacterLevelId
+                                 | 
+                                @foreach (var thing in item.CharacterClasses)
+                                {
+                                    <p>Level @thing.Class_Level @thing.Name</p>
+                                }
+                                </option>
+                            }
+                        </select>
+                        *@
+                    </form>
+                </div>
+            </div>
+
+            <div id="charForm">
+
+            <!---------------GENERAL INFO--------------->
+            <div class="section1 m-4">
+                <div class="row justify-content-lg-between">
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <p></p> <!--HARDCODED CHANGE LATER-->
+                        </div>
+                        <div class="card-body card-content">
+                            <input class="form-control" type="file" placeholder="Image">
+                        </div>
+                    </div>
+
+                    <div class="card col-8">
+                        <div class="card-body card-content align-middle">
+                            <div class="row justify-content-around section1">
+                                <input class="col m-1 form-control" type="text" placeholder="First Name" value="@Model.currentUserCharacter.FirstName"/>
+                                <input class="col m-1 form-control" type="text" placeholder="Last Name" value="@Model.currentUserCharacter.LastName"/>
+                            </div>
+                            <div class="row justify-content-around section1">
+                                <select class="form-select form-control col m-1">
+                                
+                                    <option selected disabled hidden>
+                                        @foreach (var item in Model.currentUserCharacter.CharacterClasses)
+                                        {
+                                            @item.Name
+                                            <p> | </p>
+                                            <p>Class Level </p>@item.Class_Level
+                                        }
+                                    </option>
+                                </select>
+                                <input class="col m-1 form-control" type="number" value="@Model.currentUserCharacter.CharacterLevelId">
+                                <input disabled class="col m-1 form-control" type="number" placeholder="Experience">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+                <!----------------------START TAB 1-------------------->
+                    <div class="container characterForm">
+
+                        <div class="section1">
+                            <div class="row m-3 justify-content-lg-around">
+                                
+                                @foreach (var item in Model.currentUserCharacter.CharacterStats)
+                                {
+                                        <!----------------STRENGTH--------------->
+                                        <div class="card m-1 col">
+                                            <div class="card-header header">
+                                                <h2 class="stat-header">@item.Name</h2>
+                                                <input hidden asp-for="CharacterStatIds" class="form-control" value="@item.Id">
+                                            </div>
+                                            <div class="card-body card-content">
+                                                <input asp-for="CharacterStatValues" class="w-100 form-control form-control-lg stat-modifier" type="number" placeholder="" 
+                                                               value="@item.Value"/>
+                                            </div>
+                                            <div class="card-footer">
+                                                <input disabled class="w-100 form-control form-control-sm base-stat" type="number" placeholder="">
+                                            </div>
+                                        </div>
+                                        <!--------------------------------------->
+                                }
+                            
+                            </div>
+                        </div>
+
+                        <div class="section1">
+                            <div class="row justify-content-around">
+                                <div class="card col-3">
+                                    <div class="card section1">
+                                        <div class="card-header header">
+                                            <h2 class="stat-header">Saving Throws</h2>
+                                        </div>
+                                        <div class="card-body card-content">
+                                            <div class="form-check">
+                                                <!------------------STR CHECK-------------------->
+                                                <input class="form-check-input" type="checkbox" value="" id="chaCheck">
+                                                <div class="input-group">
+                                                    <input class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                    <div class="input-group-prepend w-75">
+                                                        <div class="input-group-text char-check-text">Strength</div>
+                                                    </div>
+                                                </div>
+                                                <!----------------------------------------------->
+                                            </div>
+                                            <div class="form-check">
+                                                <!------------------DEX CHECK-------------------->
+                                                <input class="form-check-input" type="checkbox" value="" id="chaCheck">
+                                                <div class="input-group">
+                                                    <input class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                    <div class="input-group-prepend w-75">
+                                                        <div class="input-group-text char-check-text">Dexterity</div>
+                                                    </div>
+                                                </div>
+                                                <!----------------------------------------------->
+                                            </div>
+                                            <div class="form-check">
+                                                <!------------------CON CHECK-------------------->
+                                                <input class="form-check-input" type="checkbox" value="" id="conCheck">
+                                                <div class="input-group">
+                                                    <input class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                    <div class="input-group-prepend w-75">
+                                                        <div class="input-group-text char-check-text">Constitution</div>
+                                                    </div>
+                                                </div>
+                                                <!----------------------------------------------->
+                                            </div>
+                                            <div class="form-check">
+                                                <!------------------INT CHECK-------------------->
+                                                <input class="form-check-input" type="checkbox" value="" id="intCheck">
+                                                <div class="input-group">
+                                                    <input class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                    <div class="input-group-prepend w-75">
+                                                        <div class="input-group-text char-check-text">Intelligence</div>
+                                                    </div>
+                                                </div>
+                                                <!----------------------------------------------->
+                                            </div>
+                                            <div class="form-check">
+                                                <!------------------WIS CHECK-------------------->
+                                                <input class="form-check-input" type="checkbox" value="" id="wisCheck">
+                                                <div class="input-group">
+                                                    <input class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                    <div class="input-group-prepend w-75">
+                                                        <div class="input-group-text char-check-text">Wisdom</div>
+                                                    </div>
+                                                </div>
+                                                <!----------------------------------------------->
+                                            </div>
+                                            <div class="form-check">
+                                                <!------------------CHA CHECK-------------------->
+                                                <input class="form-check-input" type="checkbox" value="" id="chaCheck">
+                                                <div class="input-group">
+                                                    <input class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                    <div class="input-group-prepend w-75">
+                                                        <div class="input-group-text char-check-text">Charisma</div>
+                                                    </div>
+                                                </div>
+                                                <!----------------------------------------------->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!----------------INSPIRATION--------------->
+                                    <div class="card top-push section1">
+                                        <div class="input-group">
+                                            <input disabled class="w-25 form-control form-control-lg" type="number" placeholder="">
+                                            <div class="input-group-prepend w-75">
+                                                <div class="input-group-text">Inspiration</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--------------------------------------->
+                                    <!----------------PROFICIENCY BONUS--------------->
+                                    <div class="card section1">
+                                        <div class="input-group">
+                                            <input disabled class="w-25 form-control form-control-lg" type="number" placeholder="">
+                                            <div class="input-group-prepend w-75">
+                                                <div class="input-group-text">Proficiency Bonus</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--------------------------------------->
+                                    <!----------------PASSIVE WISDOM--------------->
+                                    <div class="card section1">
+                                        <div class="input-group">
+                                            <input disabled class="w-25 form-control form-control-lg" type="number" placeholder="">
+                                            <div class="input-group-prepend w-75">
+                                                <div class="input-group-text">Passive Wisdom</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--------------------------------------->
+                                    <!------------------OTHER PROFs AND LANGs------------------------------>
+                                    <div class="card section1">
+                                        <div class="card-header header">
+                                            <h2 class="stat-header">Proffeciencies and Languages</h2>
+                                        </div>
+                                        <div class="card-body card-content">
+                                            <select class="form-control col m-1"><option selected disabled hidden>Languages</option></select>
+                                            <textarea class="form-control" id="txtOtherPL" rows="6" placeholder="Other"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="card col-3">
+                                    <div class="card-header header">
+                                        <h2 class="stat-header">Skills</h2>
+                                    </div>
+                                    <div class="card-body card-content">
+
+                                        <div class="form-check">
+                                            <!------------------Acro CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="acroCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Acrobatics (DEX)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Animal CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="animalCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Animal Handling (WIS)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Arcana CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="arcanaCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Arcana (INT)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Athle CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="athleCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Athletics (STR)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Decept CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="deceptCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Deception (CHA)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Hist CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="histCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">History (INT)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Insight CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="insightCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Insight (WIS)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Intimi CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="intimiCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Intimidation (CHA)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Investi CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="investiCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Investigation (INT)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Med CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="medCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Medicine (WIS)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Nature CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="natureCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Nature (INT)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Percep CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="percepCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Perception (WIS)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Perform CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="performCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Performance (CHA)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Persuasion CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="persuasionCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Persuasion (CHA)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------Religion CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="religionCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Religion (INT)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------soh CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="sohCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Slight of Hand (DEX)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------stealth CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="stealthCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Stealth (DEX)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+                                        <div class="form-check">
+                                            <!------------------survival CHECK-------------------->
+                                            <input class="form-check-input" type="checkbox" value="" id="survivalCheck">
+                                            <div class="input-group">
+                                                <input disabled class="w-25 form-control form-control-sm" type="number" placeholder="">
+                                                <div class="input-group-prepend w-75">
+                                                    <div class="input-group-text char-check-text">Survival (WIS)</div>
+                                                </div>
+                                            </div>
+                                            <!----------------------------------------------->
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="card col-5">
+                                    <div class="card-body card-content">
+
+                                        <div class="row section1">
+                                            <!----------------------ARMOR CLASS-------------------------->
+                                            <div class="card col">
+                                                <div class="card-header header">
+                                                    <h2 class="stat-header">Armor Class</h2>
+                                                </div>
+                                                <div class="card-body card-content">
+                                                    <input disabled class="form-control form-control-sm" type="number" placeholder="">
+                                                </div>
+                                            </div>
+                                            <!------------------------------------------------------->
+                                            <!--------------------------INITIATIVE----------------------------->
+                                            <div class="card col">
+                                                <div class="card-header header">
+                                                    <h2 class="stat-header">Initiative</h2>
+                                                </div>
+                                                <div class="card-body card-content">
+                                                    <input disabled class="form-control form-control-sm" type="number" placeholder="">
+                                                </div>
+                                            </div>
+                                            <!------------------------------------------------------->
+                                            <!--------------------------SPEED----------------------------->
+                                            <div class="card col">
+                                                <div class="card-header header">
+                                                    <h2 class="stat-header">Speed</h2>
+                                                </div>
+                                                <div class="card-body card-content">
+                                                    <input disabled class="form-control form-control-sm" type="number" placeholder="">
+                                                </div>
+                                            </div>
+                                            <!------------------------------------------------------->
+                                        </div>
+
+                                        <div class="row section1">
+                                            <!-----------------------------HIT POINTS-------------------------->
+                                            <div class="card col">
+                                                <div class="card-header header">
+                                                    <h2 class="stat-header">Current Hit Points</h2>
+                                                </div>
+                                                <div class="card-body card-content">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend w-75">
+                                                            <div class="input-group-text char-check-text">Max Hit Points</div>
+                                                        </div>
+                                                        <input class="w-25 form-control form-control-sm" type="number" value="@Model.currentUserCharacter.MaxHitpoints">
+                                                    </div>
+                                                    <textarea disabled class="form-control" id="txtCurrentHitPoints" rows="3"></textarea>
+                                                </div>
+
+                                                <div class="card-header header">
+                                                    <h2 class="stat-header">Temporary Hit Points</h2>
+                                                </div>
+                                                <div class="card-body card-content">
+                                                    <textarea disabled class="form-control" id="txtTempHitPoints" rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                            <!------------------------------------------------------->
+                                        </div>
+
+                                        <div class="row justify-content-around">
+                                            <!----------------HIT DICE--------------->
+                                            <div class="card col">
+                                                <div class="card-header header">
+                                                    <h2 class="stat-header">Hit Dice</h2>
+                                                </div>
+                                                <div class="card-body card-content">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend w-25">
+                                                            <div class="input-group-text char-check-text">Total</div>
+                                                        </div>
+                                                        <input disabled class="w-75 form-control form-control-sm" type="number" placeholder="0">
+                                                    </div>
+                                                    <input disabled class="form-control form-control-lg stat-modifier" type="number" placeholder="">
+                                                </div>
+                                            </div>
+                                            <!--------------------------------------->
+                                            <!----------------DEATH SAVES--------------->
+                                            <div class="card col">
+                                                <div class="card-header header">
+                                                    <h2 class="stat-header">Death Saves</h2>
+                                                </div>
+                                                <div class="card-body card-content">
+                                                    <!-----------SUCCESSES----------->
+                                                    <h2 class="char-check-text">Successes</h2>
+                                                    <div class="row justify-content-around">
+                                                        <div class="form-check form-check-inline w-25">
+                                                            <input disabled class="form-check-input" type="checkbox" id="deathSuccess1" value="">
+                                                        </div>
+                                                        <div class="form-check form-check-inline w-25">
+                                                            <input disabled class="form-check-input" type="checkbox" id="deathSuccess2" value="">
+                                                        </div>
+                                                        <div class="form-check form-check-inline w-25">
+                                                            <input disabled class="form-check-input" type="checkbox" id="deathSuccess3" value="">
+                                                        </div>
+                                                    </div>
+                                                    <!-------------------------->
+                                                    <!-----------FAILURES----------->
+                                                    <h2 class="char-check-text">Failures</h2>
+                                                    <div class="row justify-content-around">
+                                                        <div class="form-check form-check-inline w-25">
+                                                            <input disabled class="form-check-input" type="checkbox" id="deathSuccess1" value="">
+                                                        </div>
+                                                        <div class="form-check form-check-inline w-25">
+                                                            <input disabled class="form-check-input" type="checkbox" id="deathSuccess2" value="">
+                                                        </div>
+                                                        <div class="form-check form-check-inline w-25">
+                                                            <input disabled class="form-check-input" type="checkbox" id="deathSuccess3" value="">
+                                                        </div>
+                                                    </div>
+                                                    <!-------------------------->
+                                                </div>
+                                            </div>
+                                            <!--------------------------------------->
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section1">
+                            <div class="row m-3 justify-content-lg-around">
+                                <div class="card m-1 col">
+                                    <div class=card-header>
+                                        Attacks and SpellCasting
+                                    </div>
+                                    <div class="card-body card-content align-middle">
+                                        <div class="row justify-content-around section1">
+                                            <input disabled class="col form-control" type="text" placeholder="Name">
+                                            <input disabled class="col form-control" type="text" placeholder="ATK Bonus">
+                                            <input disabled class="col form-control" type="text" placeholder="DMG Type">
+                                        </div>
+                                        <div class="row justify-content-around section1">
+                                            <input disabled class="col form-control" type="text" placeholder="Name">
+                                            <input disabled class="col form-control" type="text" placeholder="ATK Bonus">
+                                            <input disabled class="col form-control" type="text" placeholder="DMG Type">
+                                        </div>
+                                        <div class="row justify-content-around section1">
+                                            <input disabled class="col form-control" type="text" placeholder="Name">
+                                            <input disabled class="col form-control" type="text" placeholder="ATK Bonus">
+                                            <input disabled class="col form-control" type="text" placeholder="DMG Type">
+                                        </div>
+                                        <textarea disabled class="form-control" rows="6"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="card m-1 col">
+                                    <div class=card-header>
+                                        Equipment
+                                    </div>
+                                    <div class=card-body>
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <div>
+                                                    <input class="m-2 form-control" type="text" placeholder="CP">
+                                                    <input class="m-2 form-control" type="text" placeholder="SP">
+                                                    <input class="m-2 form-control" type="text" placeholder="EP">
+                                                    <input class="m-2 form-control" type="text" placeholder="GP">
+                                                    <input class="m-2 form-control" type="text" placeholder="PP">
+                                                </div>
+                                            </div>
+                                            <div class="col-9">
+                                                <select class="form-control col m-1" ><option selected disabled hidden>Armors</option></select>
+                                                <select class="form-control col m-1" ><option selected disabled hidden>Weapons</option></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                <!----------------------END TAB 1-------------------->
+                <!----------------------START TAB 2-------------------->
+                    <div class="container characterForm">
+
+                        <div class="section1">
+                            <div class="row m-2 justify-content-lg-between">
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        General Appearance
+                                    </div>
+                                    <div class="card-body card-content align-middle">
+                                        <div class="row justify-content-around section1">
+                                            <input class="col m-1 form-control" type="text" placeholder="Gender">
+                                            <select class="form-select form-control col m-1" ><option selected disabled hidden>@Model.currentCharRace.Name</option></select>
+                                            <input class="col m-1 form-control" type="text" placeholder="Height">
+                                            <input class="col m-1 form-control" type="text" placeholder="Weight">
+                                        </div>
+                                        <div class="row justify-content-around section1">
+                                            <input class="col m-1 form-control" type="text" placeholder="Age">
+                                            <input class="col m-1 form-control" type="text" placeholder="Skin Color">
+                                            <input class="col m-1 form-control" type="text" placeholder="Eye Color">
+                                            <input class="col m-1 form-control" type="text" placeholder="EyeType">
+                                        </div>
+                                        <div class="row justify-content-around section1">
+                                            <input class="col m-1 form-control" type="text" placeholder="Eyebrow Type">
+                                            <input class="col m-1 form-control" type="text" placeholder="Face Type">
+                                            <input class="col m-1 form-control" type="text" placeholder="Nose Type">
+                                            <input class="col m-1 form-control" type="text" placeholder="Ears Type">
+                                        </div>
+                                        <div class="row justify-content-around section1">
+
+                                            <input class="col m-1 form-control" type="text" placeholder="Hair Style">
+                                            <input class="col m-1 form-control" type="text" placeholder="Hair Primary Color">
+                                            <input class="col m-1 form-control" type="text" placeholder="Hair Secondary Color">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section1">
+                            <div class="row m-2 justify-content-lg-between">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Special Features
+                                    </div>
+                                    <div class="card-body card-content align-middle">
+                                        <div class="row justify-content-around section1">
+                                            <input class="col m-1 form-control" type="text" placeholder="Scars">
+                                            <input class="col m-1 form-control" type="text" placeholder="Piercings">
+                                            <input class="col m-1 form-control" type="text" placeholder="Tattoos">
+                                        </div>
+                                        <div class="row justify-content-around section1">
+                                            <input class="col m-1 form-control" type="text" placeholder="Freckles">
+                                            <input class="col m-1 form-control" type="text" placeholder="Makeup">
+                                            <input class="col m-1 form-control" type="text" placeholder="Facial Hair">
+                                        </div>
+                                        <textarea class="form-control" rows="4" placeholder="Other"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!----------------------END TAB 2-------------------->
+                <!----------------------START TAB 3-------------------->
+                    <div class="container characterForm">
+
+                        <div class="section1">
+
+                            <div class="row m-2 justify-content-lg-between">
+
+                                <div class="col-8">
+                                    <div class="m-2 card">
+                                        <div class="card-header">
+                                            General
+                                        </div>
+                                        <div class="card-body card-content align-middle">
+                                            <div class="row justify-content-around section1">
+                                                <input class="col m-1 form-control" type="text" placeholder="Religion">
+                                            </div>
+                                            <div class="row justify-content-around section1">
+                                                <input class="col m-1 form-control" type="text" placeholder="Alignment">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="m-2 card">
+                                        <div class="card-header">
+                                            Character Story and Lore
+                                        </div>
+                                        <div class="card-body card-content align-middle">
+                                            <textarea class="form-control" rows="8" placeholder="Background"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="m-2 card">
+                                        <div class="card-header">
+                                            Allies and Organizations
+                                        </div>
+                                        <div class="card-body card-content align-middle">
+                                            <textarea class="form-control" rows="8" placeholder="Allies and Organizations"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="m-2 card">
+                                        <div class="card-header">
+                                            Treasure
+                                        </div>
+                                        <div class="card-body card-content align-middle">
+                                            <textarea class="form-control" rows="8" placeholder="Treasure"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="card m-2">
+                                        <div class="card-header">
+                                            Personality Traits
+                                        </div>
+                                        <div class="card-body card-content align-middle">
+                                            <div class="row justify-content-around section1">
+                                                <textarea class="form-control" rows="5" placeholder="Personality Traits"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card m-2">
+                                        <div class="card-header">
+                                            Ideals
+                                        </div>
+                                        <div class="card-body card-content align-middle">
+                                            <div class="row justify-content-around section1">
+                                                <textarea class="form-control" rows="5" placeholder="Ideals"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card m-2">
+                                        <div class="card-header">
+                                            Bonds
+                                        </div>
+                                        <div class="card-body card-content align-middle">
+                                            <div class="row justify-content-around section1">
+                                                <textarea class="form-control" rows="5" placeholder="Bonds"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card m-2">
+                                        <div class="card-header">
+                                            Flaws
+                                        </div>
+                                        <div class="card-body card-content align-middle">
+                                            <div class="row justify-content-around section1">
+                                                <textarea class="form-control" rows="5" placeholder="Flaws"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!----------------------END TAB 3-------------------->
+            </div>
+        </div>
+        <!--------------------------------------------------------->
+        
+
+        <!-- MAPS GALLERY BOX-->
+        <div id="MapsGallery">
+            <button class="btnClose" type="button" onclick="toggleMapsGallery()">X</button>
+
+            <h3 class="m-4">Maps</h3>
+
+            @foreach (var item in Model.allMaps)
+            {
+                <div class="row m-2 justify-content-center" width="350px">
+                    <div class="card col m-2 justify-content-center">
+                        <div class="card-header">
+                            @item.Type
+                        </div>
+                        <div class=card-body>
+                        <img src="~/img/GameAssets/@item.ImagePath" height="200px" width="300px"></img>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <!---------------------->
+
+        <!--This is a draggable and resizable CHAT WINDOW. Chat window can be also be closed and reopened -->
+        <div id="chatBox">
+            <form action="/" class="form-container">
+                <button class="btnClose" type="button" onclick="closeForm()">X</button>
+                    <!-- Div with Previously sent messages. Empty for now -->
+                    <div id="messageBox">
+                        
+                    </div>
+                    <!------------------------------------------------------>
+                
+                    <!-------- SEND BOX where user sends their message to the chat ------>
+                    <div id="sendBox">
+                        <textarea id="sendBar" placeholder="Send message..." name="msg" required></textarea>
+                        <br />
+                        <button class="btnChat" type="submit">Send</button>
+                        
+                        
+                    </div>
+                    <!-------------------------------------------------------------------->
+                
+            </form>
+        </div>
+        <!---------------------------------------------------------------------------------------------------->
+   
+        
+        <!--This is the TOOLBAR. It is draggable and contains buttons for the DM Developer Tools -->
+            <div id="toolbar" class="draggable-ui">
+                <ul class="toolListBox">
+                    <br />
+                    <br />
+            <li>
+                <button class="btnTools" alt-text="Maps" onclick="toggleMapsGallery()">
+                    <span class="material-symbols-outlined">
+                        public
+                    </span>
+                </button>
+            </li>
+            <li>
+                <button class="btnTools" alt-text="Game Items">
+                    <span class="material-symbols-outlined">
+                        swords
+                    </span>
+                </button>
+            </li>
+            <li>
+                <button class="btnTools" alt-text="Objectives">
+                    <span class="material-symbols-outlined">
+                        flag
+                    </span>
+                </button>
+            </li>
+            <li>
+                <button class="btnTools" alt-text="Add Players">
+                    <span class="material-symbols-outlined">
+                        group_add
+                    </span>
+                </button>
+            </li>
+            <li>
+                <button class="btnTools" alt-text="End Game">
+                    <span class="material-symbols-outlined">
+                        cancel_presentation
+                    </span>
+                </button>
+            </li>
+                </ul>
+            </div>
+        <!---------------------------------------------------------------------------------------------------->
+
+        <!--This is the DICE TOOLBAR. It is draggable and contains buttons for the DM Developer Tools -->
+            <div id="dicetoolbar" class="draggable-ui">
+                <ul class="diceListBox">
+                    <br />
+                    <br />
+                    <li><button class="btnD4" onclick="Roll4()"></button></li>
+                    <li><button class="btnD6" onclick="Roll6()"></button></li>
+                    <li><button class="btnD8" onclick="Roll8()"></button></li>
+                    <li><button class="btnD10" onclick="Roll10()"></button></li>
+                    <li><button class="btnD12" onclick="Roll12()"></button></li>
+                    <li><button class="btnD20" onclick="Roll20()"></button></li>
+                    <br />
+                    <p id="diceLabel">0</p>
+                    <!--
+                    <small><p class="text-dark">Rolls:</p></small>
+                    <select class="diceConfig" name="Rolls" id="rolls">
+                        <option class="rolls" value="1">1</option>
+                        <option class="rolls" value="3">3</option>
+                        <option class="rolls"value="5">5</option>
+                        <option class="rolls" value="10">10</option>
+                    </select>
+                    -->
+                </ul>
+            </div>
+        <!---------------------------------------------------------------------------------------------------->
+
+        <!--This is the  DICE TOOLBAR. It is draggable and contains buttons for the DM Developer Tools -->
+        <!--
+            <div id="dicetoolbar" class="draggable-ui">
+                <ul>
+                    <li><input type="image" type="button" id="roll4"
+                        src='~/img/Dice/D4.jpg' height="40" width="40"/>
+                        <label id="xlabel"></label></li> 
+                    
+                    <li><input type="image" type="button" id="roll6"
+                        src='~/img/Dice/D6.jpg' height="40" width="40"/>
+                        <label id="ylabel"></label></li>
+                    
+                    <li><input type="image" type="button" id="roll8"
+                        src='~/img/Dice/D8.jpg' height="40" width="40"/>
+                        <label id="zlabel"></label></li>
+                    
+                    <li><input type="image" type="button" id="roll10"
+                        src='~/img/Dice/D10.jpg' height="40" width="40"/>
+                        <label id="ilabel"></label></li>
+                    
+                    <li><input type="image" type="button" id="roll12"
+                        src='~/img/Dice/D12.jpg' height="40" width="40"/>
+                        <label id="jlabel"></label></li>
+                   
+                    <li><input type="image" type="button" id="roll20"
+                        src='~/img/Dice/D20.jpg' height="40" width="40"/>
+                        <label id="klabel"></label></li>
+                    
+                </ul>
+            </div>
+            -->
+        <!---------------------------------------------------------------------------------------------------->
+        
+        
+        <!-- This is the PLAY WINDOW. Allows for Grid Snapping and moving the view with scroll bars. *Play window 
+                still needs modification -->
+        
+        <div id="playWindow" class="playWindow">
+        <div id="grid80" class="draggable-ui zoomable">
+            <img class="specialAsset customMap startStacked" src="~/img/GameAssets/Map1.jpg" height="700px" width="1000px"></img>
+        </div>
+        <div id="grid80" class="draggable-ui zoomable">
+            <img class="specialAsset customMap startStacked" src="~/img/GameAssets/DungeonMap.jpg"></img>
+        </div>
+            <div id="grid20" class="draggable-ui zoomable">
+                <img class="specialAsset customObj startStacked" src="~/img/GameAssets/HumanRangerPlayer.png" height="250px" width="200px"></img>
+            </div>
+            <div id="grid20" class="draggable-ui zoomable">
+                <img class="specialAsset customObj startStacked" src="~/img/GameAssets/WarlockPlayer.png" height="250px" width="200px"></img>
+            </div>
+            <div id="grid80" class="draggable-ui zoomable">
+                <img class="specialAsset customObj startStacked" src="~/img/GameAssets/redFlag.png" height="50px" width="50px"></img>
+            </div>
+            <div id="grid80" class="draggable-ui zoomable">
+                <img class="specialAsset customObj startStacked" src="~/img/GameAssets/bigTreasure.png" height="50px" width="50px"></img>
+            </div>
+            
+        </div>
+        <!----------------------------------------------------------------------------------------------------->
+        
+        
+    </div>
+</html>
