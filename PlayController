@@ -1,0 +1,156 @@
+using DMD.BL.Models;
+using DMD.BL;
+using DMD.UI.Extensions;
+using DMD.UI.Models;
+using DMD.UI.ViewModels;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+
+namespace DMD.UI.Controllers
+{
+    public class PlayController : Controller
+    {
+        public void SetIsSelected(PlayViewModel playViewModel)
+        {
+            HttpContext.Session.SetObject("isSelected", playViewModel.isSelected);
+        }
+
+        public void SetSelectedId(PlayViewModel playViewModel)
+        {
+            HttpContext.Session.SetObject("SelectedCharacterId", playViewModel.SelectedCharacterId);
+        }
+
+        // GET: PlayController
+        public ActionResult Index(string returnUrl)
+        {
+            //if(isLoggedIn)
+            if (Authenticate.IsAuthenticated(HttpContext))
+            {
+                TempData["returnurl"] = returnUrl;
+                User user = HttpContext.Session.GetObject<User>("user");
+                bool isSelected = HttpContext.Session.GetObject<bool>("isSelected");
+                Guid selectedCharacterId = HttpContext.Session.GetObject<Guid>("SelectedCharacterId");
+
+                PlayViewModel playViewModel = new PlayViewModel();
+                playViewModel.User = user;
+
+                playViewModel.allUserCharacters = CharacterManager.LoadByUserId(user.Id).Result;
+
+                if (isSelected == true)
+                {
+                    playViewModel.currentUserCharacter = CharacterManager.LoadById(selectedCharacterId).Result;
+                }
+                else
+                {
+                    playViewModel.currentUserCharacter = CharacterManager.LoadByUserId(user.Id).Result.FirstOrDefault();
+                }
+
+
+                //}
+                playViewModel.allMaps = MapsManager.Load().Result;
+                playViewModel.Stats = StatManager.Load().Result;
+                playViewModel.currentCharRace = RacesManager.LoadById(playViewModel.currentUserCharacter.RaceId);
+
+                //-------------Load lists for display menus-----------\\
+
+                //accountViewModel.myMaps = MapManager.Load().Result;
+
+                return View(playViewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+            }
+        }
+
+        // POST: PlayController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SelectCharacter(PlayViewModel playViewModel)
+        {
+            try
+            {
+                playViewModel.isSelected = true;
+                SetIsSelected(playViewModel);
+                SetSelectedId(playViewModel);
+                return RedirectToAction("Index", "Play");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+
+        // GET: PlayController/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
+
+        // GET: PlayController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: PlayController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: PlayController/Edit/5
+        public ActionResult Edit(int id)
+        {
+            return View();
+        }
+
+        // POST: PlayController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: PlayController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
+
+        // POST: PlayController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+    }
+}
