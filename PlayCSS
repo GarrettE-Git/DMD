@@ -1,0 +1,405 @@
+html {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: Arial;
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    line-height: normal;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    font-size: 18px;
+}
+
+.customNavRow {
+    width:100vw;
+}
+
+.navContentRight {
+    text-align: right;
+}
+#navbar {
+    margin: 0;
+    background-color: white;
+    position: absolute;
+    width: 100%;
+    height: 65px;
+    z-index: 30;
+    box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.2), 0 0px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+    /* navbar links */
+    #navbar a {
+        padding-bottom:12px;
+        display: inline-block;
+        color: black;
+        text-align: center;
+        padding: 15px;
+        text-decoration: none;
+    }
+
+    #navbar a {
+        padding-bottom: 12px;
+        display: inline-block;
+        color: black;
+        text-align: center;
+        padding: 15px;
+        text-decoration: none;
+    }
+
+    #navbar a:hover {
+        padding-bottom: 12px;
+        display: inline-block;
+        color: #7523B0;
+        text-align: center;
+        padding: 15px;
+        text-decoration: none
+
+    }
+
+    /*Logo, username, and nav-hide button*/
+    #homeicon {
+        margin-left:10px;
+        font-size: 20px;
+        margin-right:50px;
+        position:absolute;
+        margin-top: -10px;
+    }
+    #navLinks{
+        margin-left: 130px;
+        margin-top:7px;
+    }
+    #username {
+        float:right;
+    }
+
+    #navbar button {
+        float: right;
+        display: block;
+        color: white;
+        background-color: #7523B0;
+        text-align: center;
+        font-size: 16px;
+        text-decoration: none;
+    }
+        #navbar button:hover {
+            background-color: #ff3366;
+            box-shadow: 0 0px 3px 0 rgba(255, 51, 102, 1), 0 0px 5px 0 rgba(255, 120, 142, 1);
+        }
+
+#page {
+    margin:0;
+    overflow:hidden;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    position: relative;
+}
+
+/*Container that creates bounds for droppable user content. Can expand infinitly - 
+    Only item on page with scroll*/
+#playWindow {
+    margin: 0;
+    overflow: scroll;
+    cursor: grab;
+    float: right;
+    width: 100vw;
+    height: 100vh;
+    background-color: #757575;
+    z-index: 0;
+    top: 0;
+    left: 0;
+}
+
+/*Container that creates the bounds of the developer tools (chat and toolbar). Sits OVER play window*/
+#toolWindow {
+    overflow: hidden;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    background: none;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+}
+
+/*Container with toolbar and buttons - draggable*/
+#toolbar {
+    cursor: grabbing;
+    overflow: hidden;
+    color: white;
+    position: absolute;
+    left: 75px;
+    top: 80px;
+    width: 60px;
+    height: 300px;
+}
+
+/*Container with  dice toolbar and buttons - draggable*/
+#dicetoolbar {
+    width: 60px;
+    height: 420px;
+
+    cursor: grabbing;
+    overflow: hidden;
+    /*color: white;*/
+    position: absolute;
+    left: 0vw;
+    top: 80px;
+}
+
+.btnD4, .btnD6, .btnD8, .btnD10, .btnD12, .btnD20 {
+    width: 45px;
+    height: 45px;
+    background-size: cover;
+    border: none;
+}
+
+.btnD4 {
+    background-image:url(../../img/Dice/D4.jpg);
+}
+.btnD6 {
+    background-image: url(../../img/Dice/D6.jpg);
+}
+.btnD8 {
+    background-image: url(../../img/Dice/D8.jpg);
+}
+.btnD10 {
+    background-image: url(../../img/Dice/D10.jpg);
+}
+.btnD12 {
+    background-image: url(../../img/Dice/D12.jpg);
+}
+.btnD20 {
+    background-image: url(../../img/Dice/D20.jpg);
+}
+
+/*all the elements that can be dragged*/
+.draggable-ui {
+    user-select: none;
+    cursor: grabbing;
+    z-index: 10;
+}
+
+/*The container around the toolbar - grabbable part*/
+.toolListBox, .diceListBox {
+    margin: 0;
+    padding-left: 0;
+    background-color: white;
+    border-radius: 10px;
+    height: 300px;
+    width: 60px;
+    text-align: center;
+    align-content: center;
+    box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.2), 0 0px 12px 0 rgba(0, 0, 0, 0.19);
+}
+.diceListBox {
+    height: 420px;
+}
+
+li {
+    margin:0;
+    list-style: none;
+}
+
+/*Icon Buttons inside the Toolbar */
+.btnTools {
+    width: 40px;
+    background-color: #7523B0;
+    font-size: 24px;
+    
+    color: white;
+    padding: 5px;
+    margin: 4px;
+    border-style: none;
+    border-radius: 10px;
+}
+
+    .btnTools:hover {
+        background-color: #ff3366;
+        box-shadow: 0 0px 3px 0 rgba(255, 51, 102, 1), 0 0px 5px 0 rgba(255, 120, 142, 1);
+    }
+/*The entire chat container*/
+#chatBox {
+    margin: 0;
+    padding: 0;
+    top: 66px;
+    right: 20px;
+    position: absolute;
+    z-index: 15;
+    width: 320px;
+    height: 92vh;
+    background-color: #dedede;
+    border-radius: 5px;
+    box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.2), 0 0px 12px 0 rgba(0, 0, 0, 0.19);
+}
+
+    /*placement for the example grid items - can remove this later */
+    #grid20, #grid80 {
+        top: 10vh;
+        left: 10vh;
+    }
+
+    .form-container {
+        width: 100%;
+        height: 100%;
+    }
+
+    /*Container that will hold previously sent messages*/
+    #messageBox {
+        background-color: white;
+        margin: 10px auto 0px auto;
+        height: 74%;
+        width: 92%;
+        text-align: center;
+        border-radius: 10px;
+    }
+    /*Container with SendBar and Chat Buttons*/
+    #sendBox {
+        background-color: white;
+        margin: 10px auto auto auto;
+        height: 18%;
+        width: 92%;
+        text-align: center;
+        border-radius: 10px;
+    }
+    /*Where the message is typed*/
+    #sendBar {
+        margin-top:5px;
+        width: 96%;
+        height: 55%;
+    }
+
+/*Send and Close buttons inside the ChatBox*/
+.btnChat {
+    color:white;
+    background-color: #7523B0;
+    font-size:12px;
+    width:60px;
+    height: 20px;
+    border-style:none;
+    border-radius:4px;
+}
+
+    .btnChat:hover {
+        background-color: #ff3366;
+        box-shadow: 0 0px 3px 0 rgba(255, 51, 102, 1), 0 0px 5px 0 rgba(255, 120, 142, 1);
+    }
+
+.btnClose {
+    float: right;
+    color: white;
+    background-color: #7523B0;
+    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    border-style: none;
+    border-radius: 10px;
+    margin:5px;
+}
+
+    .btnClose:hover {
+        background-color: #ff3366;
+        box-shadow: 0 0px 3px 0 rgba(255, 51, 102, 1), 0 0px 5px 0 rgba(255, 120, 142, 1);
+    }
+
+/*Container for the open-nav and open-chat control buttons*/
+.controlbtns {
+    display: inline;
+    position: absolute;
+}
+
+/*The actual buttons for opening the chat and opening the navbar*/
+
+.open-button {
+    font-family: Arial;
+
+    padding:5px;
+    margin: 10px;
+    background-color: #7523B0;
+    color: white;
+    border-radius: 25px;
+    border-style: none;
+    z-index: 5;
+}
+
+    .open-button:hover {
+        background-color: #ff3366;
+        box-shadow: 0 0px 3px 0 rgba(255, 51, 102, 1), 0 0px 5px 0 rgba(255, 120, 142, 1);
+    }
+
+#zoomBox {
+    position: absolute;
+    text-align: center;
+    left: 10px;
+    top: 85vh;
+}
+
+#zoomLabel {
+    color: white;
+    font-size: 12px;
+    position: absolute;
+    text-align: center;
+    margin:10px;
+}
+
+.zoomIcon {
+    background:none;
+    border:none;
+    color: white;
+    font-size: 24px;
+}
+
+#charSheet {
+    display:none;
+    overflow:auto;
+    position:absolute;
+    width: 85vw;
+    height: 90vh;
+    margin: auto;
+    background-color: white;
+    border-radius:10px;
+}
+
+#charForm {
+margin:auto;
+}
+
+
+.startStacked {
+    top:5px;
+    left:30px;
+
+}
+
+
+#MapsGallery {
+    display: none;
+    position: absolute;
+    width: 400px;
+    height: 99vh;
+    margin: auto;
+    background-color: white;
+    border-radius: 10px;
+    overflow:scroll;
+}
+
+#diceLabel {
+    color: #7523B0;
+    background-color: #fab0ff;
+    font-weight: 600;
+    font-size: 26px;
+    text-align: center;
+    padding: 4px;
+    margin: 5px;
+    border: 2px;
+    border-style: solid;
+    border-radius: 4px;
+}
